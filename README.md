@@ -1,1 +1,1 @@
-# Bootdev_Pokedex
+# Boot.dev Pokedex Go Project
