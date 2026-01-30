@@ -5,12 +5,19 @@ import(
 	"bufio"
 	"os"
 	s "strings"
+	"github.com/Asheehan77/Bootdev_Pokedex/internal"
 )
 
 type cliCommand struct {
 	name		string
 	description	string
-	callback	func() error
+	callback	func(*config) error
+}
+
+type config struct{
+	pokeapiClient 	internal.Client
+	nextLocUrl		*string
+	prevLocUrl		*string
 }
 
 func getCommands() map[string]cliCommand{
@@ -25,10 +32,20 @@ func getCommands() map[string]cliCommand{
         description: "Displays a help message",
         callback:    commandHelp,
     },
+	"map": {
+        name:        "map",
+        description: "Displays the next names of 20 location areas in the Pokemon world",
+        callback:    commandMap,
+    },
+	"mapb": {
+        name:        "mapb",
+        description: "Displays the previous names of 20 location areas in the Pokemon world",
+        callback:    commandMapb,
+    },
 	}
 }
 
-func runRepl(){
+func runRepl(cfg *config){
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -37,7 +54,10 @@ func runRepl(){
 		cleaned := cleanInput(input)[0]
 		call, real := getCommands()[cleaned]
 		if real {
-			call.callback()
+			err := call.callback(cfg)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}else{
 			fmt.Println("Unknown command")
 		}
