@@ -5,17 +5,17 @@ import(
 	"bufio"
 	"os"
 	s "strings"
-	"github.com/Asheehan77/Bootdev_Pokedex/internal"
+	"github.com/Asheehan77/Bootdev_Pokedex/internal/pokeapi"
 )
 
 type cliCommand struct {
 	name		string
 	description	string
-	callback	func(*config) error
+	callback	func(*config,[]string) error
 }
 
 type config struct{
-	pokeapiClient 	internal.Client
+	pokeapiClient 	pokeapi.Client
 	nextLocUrl		*string
 	prevLocUrl		*string
 }
@@ -42,6 +42,21 @@ func getCommands() map[string]cliCommand{
         description: "Displays the previous names of 20 location areas in the Pokemon world",
         callback:    commandMapb,
     },
+	"explore": {
+        name:        "explore",
+        description: "Displays the pokemon in the given area",
+        callback:    commandExplore,
+    },
+	"catch": {
+        name:        "catch",
+        description: "Attempts to catch and add the given pokemon to your collection",
+        callback:    commandCatch,
+    },
+	"inspect": {
+        name:        "inspect",
+        description: "Displays the stats of a caught pokemon",
+        callback:    commandInspect,
+    },
 	}
 }
 
@@ -51,10 +66,10 @@ func runRepl(cfg *config){
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
 		input := scanner.Text()
-		cleaned := cleanInput(input)[0]
-		call, real := getCommands()[cleaned]
+		cleaned := cleanInput(input)
+		call, real := getCommands()[cleaned[0]]
 		if real {
-			err := call.callback(cfg)
+			err := call.callback(cfg,cleaned)
 			if err != nil {
 				fmt.Println(err)
 			}
