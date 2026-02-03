@@ -137,3 +137,12 @@ func commandInspect(cfg *config, param []string) error {
 
 	return errors.New("You haven't caught that pokemon")
 }
+
+func commandPokedex(cfg *config, param []string) error {
+	poklist := cfg.pokeapiClient.GetPokemonList()
+	fmt.Println("Your Pokedex:")
+	for _,pok := range poklist {
+		fmt.Println(" - ",pok.Name)
+	}
+	return nil
+}

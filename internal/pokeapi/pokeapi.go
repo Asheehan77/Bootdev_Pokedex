@@ -185,3 +185,8 @@ func (c * Client)GetPokemon(pokname string)(Pokemon,error){
 	}
 	return Pokemon{},errors.New("You havent caught that pokemon")
 }
+
+func (c * Client)GetPokemonList()([]Pokemon){
+
+	return c.collection
+}
